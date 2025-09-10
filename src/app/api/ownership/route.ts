@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { Prisma } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
+
 export const runtime = "nodejs";
 
 // Pour l’instant, on utilise un user "demo" (remplacera plus tard NextAuth)
@@ -13,36 +14,51 @@ export async function GET(req: NextRequest) {
   const userId = getUserId(req);
   const q = new URL(req.url).searchParams.get("query")?.trim() || "";
 
-  const where = q
-    ? { userId, card: { name: { contains: q, mode: "insensitive" } } }
-    : { userId };
+  let where: Prisma.OwnershipWhereInput = { userId };
+  if (q) {
+    where = {
+      userId,
+      card: {
+        name: { contains: q, mode: Prisma.QueryMode.insensitive },
+      },
+    };
+  }
 
   const rows = await prisma.ownership.findMany({
     where,
     include: { card: { select: { name: true, imageSmallUrl: true } } },
-    orderBy: [{ updatedAt: "desc" }],
+    orderBy: { updatedAt: "desc" },
     take: 500,
   });
 
-  return NextResponse.json(rows.map((r: { cardId: any; card: { name: any; imageSmallUrl: any; }; qty: any; updatedAt: any; }) => ({
-    cardId: r.cardId,
-    name: r.card.name,
-    image: r.card.imageSmallUrl,
-    qty: r.qty,
-    updatedAt: r.updatedAt
-  })));
+  return NextResponse.json(
+    rows.map((r) => ({
+      cardId: r.cardId,
+      name: r.card.name,
+      image: r.card.imageSmallUrl,
+      qty: r.qty,
+      updatedAt: r.updatedAt,
+    }))
+  );
 }
 
 // POST /api/ownership { cardId:number, qty:number, note?:string }
 export async function POST(req: NextRequest) {
   const userId = getUserId(req);
-  const body = await req.json().catch(() => null) as { cardId?: number; qty?: number; note?: string };
+  const body = (await req.json().catch(() => null)) as {
+    cardId?: number;
+    qty?: number;
+    note?: string;
+  };
+
   if (!body || typeof body.cardId !== "number" || typeof body.qty !== "number") {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  // Vérifier que la carte existe (seedé)
-  const exists = await prisma.card.findUnique({ where: { id: body.cardId }, select: { id: true } });
+  const exists = await prisma.card.findUnique({
+    where: { id: body.cardId },
+    select: { id: true },
+  });
   if (!exists) return NextResponse.json({ error: "Card not found" }, { status: 404 });
 
   const row = await prisma.ownership.upsert({

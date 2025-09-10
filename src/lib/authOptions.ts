@@ -40,7 +40,8 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           role: user.role as UserRole,
           firstName: user.firstName,
-          lastName: user.lastName
+          lastName: user.lastName,
+          pseudo: user.pseudo
         };
       },
     }),
@@ -51,8 +52,9 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.role = user.role;
-        token.firstName = (user as any).firstName ?? null;
-        token.lastName = (user as any).lastName ?? null;
+        token.firstName = user.firstName ?? null;
+        token.lastName = user.lastName ?? null;
+        token.pseudo = user.pseudo ?? null
       }
 
       // Permettre session.update côté client si besoin
@@ -68,8 +70,9 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.role = token.role as UserRole;
-        session.user.firstName = (token as any).firstName ?? null;
-        session.user.lastName  = (token as any).lastName ?? null;
+        session.user.firstName = token.firstName ?? null;
+        session.user.lastName  = token.lastName ?? null;
+        session.user.pseudo = token.pseudo ?? null;
       }
       return session;
     },

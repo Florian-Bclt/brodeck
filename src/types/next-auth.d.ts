@@ -8,6 +8,7 @@ declare module "next-auth" {
       role: UserRole;
       firstName?: string | null;
       lastName?: string | null;
+      pseudo?: string | null;
     }
 
   interface Session extends DefaultSession {
@@ -22,5 +23,6 @@ declare module "next-auth/jwt" {
       role: UserRole;
       firstName?: string | null;
       lastName?: string | null;
+      pseudo?: string | null;
     }
 }

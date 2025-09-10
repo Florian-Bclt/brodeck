@@ -1,9 +1,11 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Suspense } from "react";
+import LoginClient from "./login/page";
 
 export default function Home() {
   return (
-    <div className="bg-black text-white">
-      BroDeck
-    </div>
+    <Suspense fallback={null}>
+      <LoginClient />
+    </Suspense>
   );
 }

@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
@@ -11,6 +10,24 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+* {
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet explorer */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 html,
@@ -27,15 +44,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
 a {
   color: inherit;
   text-decoration: none;
+}
+
+a, button {
+  cursor: pointer;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,8 +58,3 @@ a {
     color-scheme: dark;
   }
 }
-
-DATABASE_URL="postgresql://neondb_owner:npg_ftX3yrvO8TiI@ep-empty-mountain-abmxgksn-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-NEXTAUTH_SECRET="iGzJWqzkN#3EFegLbtTCWZJZWGpY0et4CYFDqVm1wEAo8lqwfW8gbksT7qR!62VIpxjbhu7pNEUN#SbEOoh2iqPpNCnUgGw&7BL7hM7AV1lIX&9dJ9d62j&r5jefw8r@"
-NEXTAUTH_URL='http://localhost:3000'
-NEXT_PUBLIC_APP_URL='http://localhost:3000'
