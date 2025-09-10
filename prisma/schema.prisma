@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+}
+
+model User {
+  id         String      @id @default(cuid())
+  email      String      @unique
+  password   String
+  firstName  String
+  lastName   String
+  pseudo     String?
+  role       UserRole
+  ownerships Ownership[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Card {
+  id            Int       @id
+  name          String    @db.VarChar(200)
+  type          String?
+  frameType     String?
+  desc          String?   @db.Text
+  race          String?
+  archetype     String?
+  atk           Int?
+  def           Int?
+  level         Int?
+  attribute     String?
+
+  // visuels
+  imageUrl      String?
+  imageSmallUrl String?
+
+  // champs utiles à l’update incrémentale
+  contentHash   String?   @db.VarChar(64)
+  lastSyncedAt  DateTime?
+
+  // raw (facultatif) pour garder le payload si tu veux
+  rawJson       Json?
+
+  ownerships    Ownership[]
+
+  @@index([name])
+  @@index([archetype])
+}
+
+model Ownership {
+  userId   String
+  cardId   Int
+  qty      Int       @default(0)
+  note     String?
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card   Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@id([userId, cardId]) // 1 ligne par (user, carte)
+}

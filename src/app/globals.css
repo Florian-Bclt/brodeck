@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -40,3 +43,8 @@ a {
     color-scheme: dark;
   }
 }
+
+DATABASE_URL="postgresql://neondb_owner:npg_ftX3yrvO8TiI@ep-empty-mountain-abmxgksn-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+NEXTAUTH_SECRET="iGzJWqzkN#3EFegLbtTCWZJZWGpY0et4CYFDqVm1wEAo8lqwfW8gbksT7qR!62VIpxjbhu7pNEUN#SbEOoh2iqPpNCnUgGw&7BL7hM7AV1lIX&9dJ9d62j&r5jefw8r@"
+NEXTAUTH_URL='http://localhost:3000'
+NEXT_PUBLIC_APP_URL='http://localhost:3000'
