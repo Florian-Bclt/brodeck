@@ -36,15 +36,15 @@ export default function AdminDashboard() {
         <h1 className="text-3xl font-bold text-white">Dashboard admin</h1>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
+          <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Membres</p>
             <p className="mt-2 text-2xl font-semibold">42</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
+          <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Cartes sync</p>
             <p className="mt-2 text-2xl font-semibold">13 876</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
+          <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Dernière sync</p>
             <p className="mt-2 text-2xl font-semibold">Aujourd’hui</p>
           </div>

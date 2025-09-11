@@ -1,27 +1,33 @@
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from "../src/generated/prisma";
 import crypto from "node:crypto";
 
 const prisma = new PrismaClient();
 
+type BanStatus = "LEGAL" | "LIMITED" | "SEMI_LIMITED" | "BANNED";
 type YgoCard = {
-  id: number;
-  name: string;
-  type?: string;
-  frameType?: string;
-  desc?: string;
-  race?: string;
-  archetype?: string;
-  atk?: number; def?: number; level?: number; attribute?: string;
+  id: number; name: string; type?: string; frameType?: string; desc?: string;
+  race?: string; archetype?: string; atk?: number; def?: number; level?: number; attribute?: string;
   card_images?: { image_url: string; image_url_small: string }[];
-  // autres champs ignorés pour le moment (card_sets, card_prices, misc_info, etc.)
+  banlist_info?: { ban_tcg?: string };
 };
 
+function parseBan(val?: string): BanStatus {
+  const s = (val ?? "")
+    .trim()
+    .toLowerCase()
+
+  if (s === "forbidden" || s === "banned") return "BANNED";
+  if (s === "limited") return "LIMITED";
+  if (s === "semilimited") return "SEMI_LIMITED";
+  return "LEGAL";
+}
+
 function hashCard(c: YgoCard): string {
-  // Hash stable basé sur les champs qu’on persiste
   const payload = JSON.stringify({
     id: c.id, name: c.name, type: c.type, frameType: c.frameType, desc: c.desc,
     race: c.race, archetype: c.archetype, atk: c.atk, def: c.def, level: c.level,
     attribute: c.attribute, img: c.card_images?.[0],
+    ban_tcg: c.banlist_info?.ban_tcg ?? null,
   });
   return crypto.createHash("sha256").update(payload).digest("hex");
 }
@@ -37,25 +43,21 @@ async function main() {
   const BATCH = 300;
   for (let i = 0; i < data.length; i += BATCH) {
     const slice = data.slice(i, i + BATCH);
-
-    // 1) Préparer une map des hashes existants pour éviter des writes inutiles
     const ids = slice.map(c => c.id);
+
     const existing = await prisma.card.findMany({
       where: { id: { in: ids } },
       select: { id: true, contentHash: true },
     });
-    const existingMap = new Map(existing.map((e: { id: any; contentHash: any; }) => [e.id, e.contentHash ?? ""]));
+    const existingMap = new Map(existing.map(e => [e.id, e.contentHash ?? ""]));
 
-    // 2) Upserts uniquement si le hash change (ou si new)
     const ops = slice.map(c => {
       const h = hashCard(c);
       const img = c.card_images?.[0];
+      const tcgBanStatus: BanStatus = parseBan(c.banlist_info?.ban_tcg);
 
       const isSame = existingMap.get(c.id) === h;
-      if (isSame) {
-        // rien à faire -> renvoyer une promesse résolue
-        return Promise.resolve(null);
-      }
+      if (isSame) return Promise.resolve(null);
 
       return prisma.card.upsert({
         where: { id: c.id },
@@ -73,6 +75,7 @@ async function main() {
           attribute: c.attribute ?? null,
           imageUrl: img?.image_url ?? null,
           imageSmallUrl: img?.image_url_small ?? null,
+          tcgBanStatus,                
           contentHash: h,
           lastSyncedAt: new Date(),
           rawJson: c as any,
@@ -90,6 +93,7 @@ async function main() {
           attribute: c.attribute ?? null,
           imageUrl: img?.image_url ?? null,
           imageSmallUrl: img?.image_url_small ?? null,
+          tcgBanStatus,                
           contentHash: h,
           lastSyncedAt: new Date(),
           rawJson: c as any,
@@ -97,19 +101,17 @@ async function main() {
       });
     });
 
-    // 3) Exécuter en parallèle, mais batch par batch pour ne pas saturer
     await Promise.all(ops);
     console.log(`Upserted batch ${i}-${i + slice.length - 1}`);
   }
 
-  // (Optionnel) créer un user de test si absent
-  await prisma.user.upsert({
-    where: { email: "demo@asso.local" },
-    create: { email: "demo@asso.local", name: "Demo User" },
-    update: {},
-  });
-
   console.log("Seed complete.");
+
+  const counts = await prisma.card.groupBy({
+    by: ["tcgBanStatus"],
+    _count: { tcgBanStatus: true },
+  });
+  console.log("BanStatus:", counts);
 }
 
 main()

@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 
-export default function ClientDashboard() {
+export default function Decks() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { data: session, status } = useSession();
 
@@ -42,18 +42,9 @@ export default function ClientDashboard() {
       <div className="relative z-10 p-4 md:p-6">
         <h1 className="text-3xl font-bold text-white">Salut, {displayName}</h1>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
-            <p className="text-sm opacity-80">Membres</p>
-            <p className="mt-2 text-2xl font-semibold">42</p>
-          </div>
-          <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
-            <p className="text-sm opacity-80">Cartes sync</p>
-            <p className="mt-2 text-2xl font-semibold">13 876</p>
-          </div>
-          <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
-            <p className="text-sm opacity-80">Dernière sync</p>
-            <p className="mt-2 text-2xl font-semibold">Aujourd’hui</p>
+        <div className="flex justify-center items-center h-200">
+          <div className="rounded-2xl border border-white/40 bg-black/60 p-4 text-slate-200 backdrop-blur">
+            <p className="mt-2 text-2xl font-semibold">Tu te calme Martine, j'ai pas fini cette page !</p>
           </div>
         </div>
       </div>

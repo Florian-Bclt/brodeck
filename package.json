@@ -13,7 +13,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^6.15.0",
     "@tailwindcss/postcss": "^4.1.13",
     "bcryptjs": "^3.0.2",
     "framer-motion": "^12.23.12",
@@ -31,12 +30,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/client": "^6.16.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
-    "prisma": "^6.15.0",
+    "prisma": "^6.16.1",
     "tsx": "^4.20.5",
     "typescript": "^5"
   }

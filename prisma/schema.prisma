@@ -13,6 +13,13 @@ enum UserRole {
   ADMIN
 }
 
+enum TcgBanStatus {
+  LEGAL
+  LIMITED
+  SEMI_LIMITED
+  BANNED
+}
+
 model User {
   id         String      @id @default(cuid())
   email      String      @unique
@@ -43,6 +50,8 @@ model Card {
   imageUrl      String?
   imageSmallUrl String?
 
+  tcgBanStatus  TcgBanStatus?  @default(LEGAL)
+
   // champs utiles à l’update incrémentale
   contentHash   String?   @db.VarChar(64)
   lastSyncedAt  DateTime?
@@ -54,6 +63,7 @@ model Card {
 
   @@index([name])
   @@index([archetype])
+  @@index([tcgBanStatus])
 }
 
 model Ownership {

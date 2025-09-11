@@ -218,9 +218,9 @@ export default function MembresPage() {
     m.email;
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-4 p-6">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center p-6">
         <h1 className="text-2xl font-bold">Membres</h1>
 
         <div className="flex items-center gap-2">
