@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@/generated/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import { prisma } from "@/lib/prisma"; // ✅ singleton conseillé
+import { prisma } from "@/lib/prisma";
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {

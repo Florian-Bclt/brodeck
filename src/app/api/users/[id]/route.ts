@@ -9,26 +9,20 @@ import { deleteUser } from "@/lib/users/deleteService";
 export const runtime = "nodejs";
 
 // GET /api/users/:id  (admin-only pour l’interface admin)
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: NextRequest, context: any) {
   const session = await getServerSession(authOptions);
   const role = (session?.user as any)?.role as UserRole | undefined;
   if (role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const user = await getUserById(params.id);
+  const user = await getUserById(context.params.id);
   if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(user);
 }
 
 // PATCH /api/users/:id
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, context: any) {
   const session = await getServerSession(authOptions);
   const currentRole = (session?.user as any)?.role as UserRole | undefined;
   const currentUserId = (session?.user as any)?.id as string | undefined;
@@ -43,7 +37,7 @@ export async function PATCH(
   }
 
   try {
-    const updated = await updateUser(params.id, body, currentRole, currentUserId);
+    const updated = await updateUser(context.params.id, body, currentRole, currentUserId);
     return NextResponse.json(updated);
   } catch (e: any) {
     return NextResponse.json({ error: e?.message ?? "Update failed" }, { status: 400 });
@@ -51,10 +45,7 @@ export async function PATCH(
 }
 
 // DELETE /api/users/:id
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: NextRequest, context: any) {
   const session = await getServerSession(authOptions);
   const currentRole = (session?.user as any)?.role as UserRole | undefined;
   const currentUserId = (session?.user as any)?.id as string | undefined;
@@ -64,7 +55,7 @@ export async function DELETE(
   }
 
   try {
-    const res = await deleteUser(params.id, currentRole, currentUserId);
+    const res = await deleteUser(context.params.id, currentRole, currentUserId);
     return NextResponse.json(res);
   } catch (e: any) {
     return NextResponse.json({ error: e?.message ?? "Delete failed" }, { status: 400 });
