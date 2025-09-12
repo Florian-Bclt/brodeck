@@ -1,12 +1,14 @@
 {
   "name": "brodeck",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "generate": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "typecheck": "tsc --noEmit",
     "seed": "prisma db seed",
     "ygo:seed": "prisma db seed",
