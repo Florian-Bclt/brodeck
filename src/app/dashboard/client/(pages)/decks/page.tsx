@@ -40,11 +40,11 @@ export default function Decks() {
 
       {/* Contenu */}
       <div className="relative z-10 p-4 md:p-6">
-        <h1 className="text-3xl font-bold text-white">Salut, {displayName}</h1>
+        <h1 className="flex justify-center lg:justify-start text-3xl font-bold text-white">Salut, {displayName}</h1>
 
-        <div className="flex justify-center items-center h-200">
+        <div className="flex justify-center items-center h-130 lg:h-200">
           <div className="rounded-2xl border border-white/40 bg-black/60 p-4 text-slate-200 backdrop-blur">
-            <p className="mt-2 text-2xl font-semibold">Tu te calme Martine, j'ai pas fini cette page !</p>
+            <p className="mt-2 lg:text-2xl font-semibold text-center">Tu te calme Martine, <br/> j'ai pas fini cette page !</p>
           </div>
         </div>
       </div>

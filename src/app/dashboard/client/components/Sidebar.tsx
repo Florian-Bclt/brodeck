@@ -144,7 +144,7 @@ export default function Sidebar() {
 
       {/* Mobile toggle button */}
       <button onClick={() => setIsOpen(true)} className="lg:hidden p-3 fixed top-4 left-4 z-50">
-        <Menu size={28} />
+        <Menu size={28} className="text-amber-600"/>
       </button>
 
       {/* Mobile overlay */}

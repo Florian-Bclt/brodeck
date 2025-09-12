@@ -40,7 +40,7 @@ export default function ClientDashboard() {
 
       {/* Contenu */}
       <div className="relative z-10 p-4 md:p-6">
-        <h1 className="text-3xl font-bold text-white">Salut, {displayName}</h1>
+        <h1 className="flex justify-center lg:justify-start text-3xl font-bold text-white">Salut, {displayName}</h1>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">

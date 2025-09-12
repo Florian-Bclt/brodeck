@@ -75,28 +75,6 @@ export default function CollectionPage() {
     };
   };
 
-  function buildParams(targetPage = page, query = q) {
-    return buildCardSearchParams({
-      q: query,
-      page: targetPage,
-      pageSize: PAGE_SIZE,
-
-      cardType,
-
-      monsterClass,
-      race: monsterRace,
-      attribute,
-
-      spellSubtype,
-      trapSubtype,
-
-      levelMin, levelMax, atkMin, atkMax, defMin, defMax,
-
-      stock: stockFilter,
-      ban: banFilter as BanFilter,
-    });
-  }
-
   async function load(targetPage = page, query = q, overrides: Partial<Filters> = {}) {
     setLoading(true);
     try {
@@ -192,7 +170,7 @@ export default function CollectionPage() {
 
       {/* Header + search */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-white">Ma collection</h1>
+        <h1 className="flex justify-center lg:justify-start text-2xl font-bold text-white">Ma collection</h1>
         <div className="flex w-full max-w-xl items-center gap-2">
           <input
             value={qInput}
@@ -401,7 +379,7 @@ export default function CollectionPage() {
       </div>
 
       {/* Résumé / pagination top */}
-      <div className="mb-3 flex items-center justify-between text-sm text-white/70">
+      <div className="mb-3 flex flex-col md:flex-row items-center justify-between text-sm text-white/70 gap-2">
         <div>
           {data ? (
             <>Résultats : <b>{data.total}</b>{q ? <> • filtre « {q} »</> : null}</>
