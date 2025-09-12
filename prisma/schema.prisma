@@ -49,6 +49,7 @@ model Card {
   // visuels
   imageUrl      String?
   imageSmallUrl String?
+  imageLargeUrl String?
 
   tcgBanStatus  TcgBanStatus?  @default(LEGAL)
 

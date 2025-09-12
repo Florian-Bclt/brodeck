@@ -9,6 +9,7 @@ import {
 } from "@/features/cards/constants";
 import { tMonsterClass, tMonsterRace, tAttribute, tSpellSubtype, tTrapSubtype, tCardType, tBan, toOptions } from "@/features/cards/labelFR";
 import { buildCardSearchParams } from "@/features/cards/params";
+import CardDetailModal from "@/app/components/CardDetailModal";
 
 type CardRow = { id: number; name: string; type?: string | null; imageSmallUrl?: string | null };
 type ListResp = { total: number; page: number; pageSize: number; data: CardRow[] };
@@ -59,6 +60,19 @@ export default function CollectionPage() {
   const [stockFilter, setStockFilter] = useState<"all"|"owned"|"unowned">("all");
   const [banFilter, setBanFilter] = useState<BanFilter>("any");
 
+  // Détail
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const openDetail = (id: number) => {
+    setSelectedId(id);
+    setDetailOpen(true);
+  };
+  const closeDetail = () => {
+    setDetailOpen(false);
+    // (optionnel) garde l’id pour recharger instant si réouverture
+    // setSelectedId(null);
+  };
   const totalPages = useMemo(
     () => (data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1),
     [data]
@@ -74,6 +88,28 @@ export default function CollectionPage() {
       ban: banFilter,
     };
   };
+
+  function buildParams(targetPage = page, query = q) {
+    return buildCardSearchParams({
+      q: query,
+      page: targetPage,
+      pageSize: PAGE_SIZE,
+
+      cardType,
+
+      monsterClass,
+      race: monsterRace,
+      attribute,
+
+      spellSubtype,
+      trapSubtype,
+
+      levelMin, levelMax, atkMin, atkMax, defMin, defMax,
+
+      stock: stockFilter,
+      ban: banFilter as BanFilter,
+    });
+  }
 
   async function load(targetPage = page, query = q, overrides: Partial<Filters> = {}) {
     setLoading(true);
@@ -452,8 +488,9 @@ export default function CollectionPage() {
                       <img
                         src={c.imageSmallUrl}
                         alt={c.name}
-                        className="h-28 w-20 rounded-lg object-cover ring-1 ring-white/10"
+                        className="h-28 w-20 rounded-lg object-cover ring-1 ring-white/10 cursor-pointer"
                         loading="lazy"
+                        onClick={() => openDetail(c.id)}
                       />
                     ) : (
                       <div className="h-28 w-20 rounded-lg bg-white/10" />
@@ -527,6 +564,11 @@ export default function CollectionPage() {
           </div>
         </div>
       )}
+      <CardDetailModal
+        cardId={selectedId}
+        open={detailOpen}
+        onClose={closeDetail}
+      />
     </main>
   );
 }

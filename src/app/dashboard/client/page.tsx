@@ -44,8 +44,8 @@ export default function ClientDashboard() {
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
-            <p className="text-sm opacity-80">Membres</p>
-            <p className="mt-2 text-2xl font-semibold">42</p>
+            <p className="text-sm opacity-80">Cartes possédés</p>
+            <p className="mt-2 text-2xl font-semibold">à venir</p>
           </div>
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Cartes sync</p>

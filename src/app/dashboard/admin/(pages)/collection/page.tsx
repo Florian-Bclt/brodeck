@@ -9,6 +9,7 @@ import {
 } from "@/features/cards/constants";
 import { tMonsterClass, tMonsterRace, tAttribute, tSpellSubtype, tTrapSubtype, tCardType, tBan, toOptions } from "@/features/cards/labelFR";
 import { buildCardSearchParams } from "@/features/cards/params";
+import CardDetailModal from "@/app/components/CardDetailModal";
 
 type CardRow = { id: number; name: string; type?: string | null; imageSmallUrl?: string | null };
 type ListResp = { total: number; page: number; pageSize: number; data: CardRow[] };
@@ -59,6 +60,19 @@ export default function CollectionPage() {
   const [stockFilter, setStockFilter] = useState<"all"|"owned"|"unowned">("all");
   const [banFilter, setBanFilter] = useState<BanFilter>("any");
 
+  // Détail
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const openDetail = (id: number) => {
+    setSelectedId(id);
+    setDetailOpen(true);
+  };
+  const closeDetail = () => {
+    setDetailOpen(false);
+    // (optionnel) garde l’id pour recharger instant si réouverture
+    // setSelectedId(null);
+  };
   const totalPages = useMemo(
     () => (data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1),
     [data]
@@ -192,7 +206,7 @@ export default function CollectionPage() {
 
       {/* Header + search */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-white">Ma collection</h1>
+        <h1 className="flex justify-center lg:justify-start text-2xl font-bold text-white">Ma collection</h1>
         <div className="flex w-full max-w-xl items-center gap-2">
           <input
             value={qInput}
@@ -401,7 +415,7 @@ export default function CollectionPage() {
       </div>
 
       {/* Résumé / pagination top */}
-      <div className="mb-3 flex items-center justify-between text-sm text-white/70">
+      <div className="mb-3 flex flex-col md:flex-row items-center justify-between text-sm text-white/70 gap-2">
         <div>
           {data ? (
             <>Résultats : <b>{data.total}</b>{q ? <> • filtre « {q} »</> : null}</>
@@ -474,8 +488,9 @@ export default function CollectionPage() {
                       <img
                         src={c.imageSmallUrl}
                         alt={c.name}
-                        className="h-28 w-20 rounded-lg object-cover ring-1 ring-white/10"
+                        className="h-28 w-20 rounded-lg object-cover ring-1 ring-white/10 cursor-pointer"
                         loading="lazy"
+                        onClick={() => openDetail(c.id)}
                       />
                     ) : (
                       <div className="h-28 w-20 rounded-lg bg-white/10" />
@@ -549,6 +564,11 @@ export default function CollectionPage() {
           </div>
         </div>
       )}
+      <CardDetailModal
+        cardId={selectedId}
+        open={detailOpen}
+        onClose={closeDetail}
+      />
     </main>
   );
 }

@@ -1,9 +1,11 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 
 export default function AdminDashboard() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { data: session, status } = useSession();
 
   // Respecte "prefers-reduced-motion" (désactive l’auto-play si l’utilisateur le souhaite)
   useEffect(() => {
@@ -12,6 +14,12 @@ export default function AdminDashboard() {
       videoRef.current.pause();
     }
   }, []);
+
+  const pseudo = (session?.user as any)?.pseudo ?? null;
+  const firstName = (session?.user as any)?.firstName ?? null;
+  const displayName =
+    pseudo || firstName || session?.user?.email?.split("@")[0] || "Utilisateur";
+
 
   return (
     <main className="relative min-h-dvh overflow-hidden">
@@ -33,12 +41,12 @@ export default function AdminDashboard() {
 
       {/* Contenu */}
       <div className="relative z-10 p-4 md:p-6">
-        <h1 className="text-3xl font-bold text-white">Dashboard admin</h1>
+        <h1 className="flex justify-center lg:justify-start text-3xl font-bold text-white">Salut, {displayName}</h1>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
-            <p className="text-sm opacity-80">Membres</p>
-            <p className="mt-2 text-2xl font-semibold">42</p>
+            <p className="text-sm opacity-80">Cartes possédés</p>
+            <p className="mt-2 text-2xl font-semibold">à venir</p>
           </div>
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Cartes sync</p>

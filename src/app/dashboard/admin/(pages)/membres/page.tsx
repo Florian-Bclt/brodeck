@@ -221,9 +221,9 @@ export default function MembresPage() {
     <div className="flex h-full flex-col gap-4 p-6">
       {/* Header */}
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center p-6">
-        <h1 className="text-2xl font-bold">Membres</h1>
+        <h1 className="flex justify-center lg:justify-start text-2xl font-bold">Membres</h1>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center gap-2">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 opacity-60" size={18} />
             <input
@@ -236,14 +236,14 @@ export default function MembresPage() {
           </div>
           <button
             onClick={() => load(1)}
-            className="h-10 rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-medium transition hover:bg-white/20"
+            className="h-10 rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-medium transition hover:bg-white/20 w-64 md:w-auto"
           >
             Rechercher
           </button>
 
           <button
             onClick={() => setOpenCreate(true)}
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 font-semibold ring-1 ring-white/10 transition hover:brightness-110"
+            className="inline-flex h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 font-semibold ring-1 ring-white/10 transition hover:brightness-110 w-64 md:w-auto"
           >
             <Plus size={18} />
             Ajouter un membre
