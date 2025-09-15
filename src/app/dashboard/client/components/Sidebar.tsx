@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Home, Menu, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Home, Menu, X, ChevronLeft, ChevronRight, LogOut, Upload } from "lucide-react";
 import { GiCardPick, GiCardDraw } from "react-icons/gi"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "next-auth/react";
@@ -13,6 +13,7 @@ const NAV = [
   { name: "Accueil",      href: "/dashboard/client",            Icon: Home },
   { name: "Collection",   href: "/dashboard/client/collection", Icon: GiCardPick },
   { name: "Decks",        href: "/dashboard/client/decks",      Icon: GiCardDraw },
+  { name: 'Imports',      href: "/dashboard/client/imports",    Icon: Upload }
 
 ];
 

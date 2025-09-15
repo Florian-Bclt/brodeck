@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
     prisma.card.findMany({
       where,
       select: { id: true, name: true, type: true, imageSmallUrl: true },
-      orderBy: { id: "asc" },
+      orderBy: [{ name: 'asc'}, { id: "asc" }],
       skip,
       take: pageSize,
     }),

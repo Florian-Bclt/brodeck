@@ -1,11 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function ClientDashboard() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { data: session, status } = useSession();
+  const [ownedCount, setOwnedCount] = useState<number | null>(null);
 
   // Respecte "prefers-reduced-motion" (désactive l’auto-play si l’utilisateur le souhaite)
   useEffect(() => {
@@ -13,6 +14,21 @@ export default function ClientDashboard() {
     if (m.matches && videoRef.current) {
       videoRef.current.pause();
     }
+  }, []);
+
+  useEffect(() => {
+    async function fetchOwned() {
+      try {
+        const res = await fetch("/api/stats/cards-owned", { cache: "no-store" });
+        if (!res.ok) throw new Error("fetch failed");
+        const data = await res.json();
+        setOwnedCount(data.totalOwned);
+      } catch (e) {
+        console.error("Erreur fetch cartes possédées", e);
+        setOwnedCount(0);
+      }
+    }
+    fetchOwned();
   }, []);
 
   const pseudo = (session?.user as any)?.pseudo ?? null;
@@ -45,7 +61,7 @@ export default function ClientDashboard() {
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Cartes possédés</p>
-            <p className="mt-2 text-2xl font-semibold">à venir</p>
+            <p className="mt-2 text-2xl font-semibold">{ownedCount === null ? "..." : ownedCount}</p>
           </div>
           <div className="rounded-2xl border border-white/40 bg-white/40 p-4 text-slate-600 backdrop-blur">
             <p className="text-sm opacity-80">Cartes sync</p>
