@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "Yu-Gi-Brothers",
   description: "Site de l'association Yu-Gi-Brothers",
 
-  // Ajout des icônes
+  // chAjout des icônes
   icons: {
     icon: [
       { url: "/favicon.ico" }, // legacy

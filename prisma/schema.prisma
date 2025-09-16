@@ -44,6 +44,8 @@ model Card {
   atk           Int?
   def           Int?
   level         Int?
+  rank          Int?
+  link          Int?
   attribute     String?
 
   // visuels
@@ -59,6 +61,8 @@ model Card {
 
   // raw (facultatif) pour garder le payload si tu veux
   rawJson       Json?
+
+  nameSearch    String?
 
   ownerships    Ownership[]
 

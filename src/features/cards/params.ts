@@ -9,6 +9,7 @@ export type CardSearchFilters = {
 
   monsterClass?: string;
   race?: string;
+  monsterRace?: string;
   attribute?: string;
 
   spellSubtype?: string;
@@ -36,7 +37,8 @@ export function buildCardSearchParams(f: CardSearchFilters) {
 
   if (f.cardType === "MONSTER") {
     if (f.monsterClass) sp.set("monsterClass", f.monsterClass);
-    if (f.race)         sp.set("race", f.race);
+    const raceValue = f.race ?? f.monsterRace;
+    if (raceValue)      sp.set("race", raceValue);
     if (f.attribute)    sp.set("attribute", f.attribute);
 
     if (f.levelMin) sp.set("levelMin", String(f.levelMin));
