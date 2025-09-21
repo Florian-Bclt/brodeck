@@ -14,7 +14,7 @@ import CardDetailModal from "@/app/components/CardDetailModal";
 type CardRow = { id: number; name: string; type?: string | null; imageSmallUrl?: string | null };
 type ListResp = { total: number; page: number; pageSize: number; data: CardRow[] };
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 type Filters = {
   cardType: CardType;
