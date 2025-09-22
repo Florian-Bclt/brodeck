@@ -52,6 +52,7 @@ model Card {
   imageUrl      String?
   imageSmallUrl String?
   imageLargeUrl String?
+  imageDhash    String?   @db.Char(16)
 
   tcgBanStatus  TcgBanStatus?  @default(LEGAL)
 
@@ -69,6 +70,7 @@ model Card {
   @@index([name])
   @@index([archetype])
   @@index([tcgBanStatus])
+  @@index([imageDhash])
 }
 
 model Ownership {
