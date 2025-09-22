@@ -19,7 +19,7 @@ export function ScannerModal({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Ouvre/ferme la caméra selon l'état du modal
+  // Caméra on/off
   useEffect(() => {
     let stream: MediaStream | null = null;
     (async () => {
@@ -37,12 +37,10 @@ export function ScannerModal({
         setError("Accès caméra refusé (HTTPS/permissions/appareil).");
       }
     })();
-    return () => {
-      stream?.getTracks().forEach((t) => t.stop());
-    };
+    return () => stream?.getTracks().forEach((t) => t.stop());
   }, [open]);
 
-  // dHash 64-bit (canvas -> 16 hex chars)
+  // dHash 64-bit (16 hex) depuis un canvas
   function computeDhashFromCanvas(src: HTMLCanvasElement): string | null {
     try {
       const w = 9, h = 8;
@@ -50,10 +48,10 @@ export function ScannerModal({
       c.width = w; c.height = h;
       const g = c.getContext("2d")!;
       g.drawImage(src, 0, 0, w, h);
-      const img = g.getImageData(0, 0, w, h).data; // RGBA
+      const data = g.getImageData(0, 0, w, h).data; // RGBA
       const gray = new Uint8Array(w * h);
-      for (let i = 0, p = 0; i < img.length; i += 4, p++) {
-        gray[p] = (img[i] * 0.299 + img[i + 1] * 0.587 + img[i + 2] * 0.114) | 0;
+      for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+        gray[p] = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) | 0;
       }
       const bits: number[] = [];
       for (let y = 0; y < h; y++) {
@@ -89,7 +87,7 @@ export function ScannerModal({
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(video, 0, 0, cw, ch);
 
-    // Helper crop (pourcentage)
+    // Helper crop (%)
     const crop = (xPct: number, yPct: number, wPct: number, hPct: number) => {
       const x = Math.round(cw * xPct);
       const y = Math.round(ch * yPct);
@@ -101,17 +99,16 @@ export function ScannerModal({
       return out;
     };
 
-    // ROIs : ajustables selon cadrage
-    const nameROI = crop(0.06, 0.05, 0.88, 0.18); // bande nom (haut)
-    const codeROI = crop(0.55, 0.84, 0.40, 0.13); // passcode (bas droit)
-    const artROI  = crop(0.12, 0.22, 0.76, 0.42); // artwork (centre)
+    // ROIs (ajuste si besoin selon ton cadrage)
+    const nameROI = crop(0.06, 0.05, 0.88, 0.18); // bande nom
+    const codeROI = crop(0.55, 0.84, 0.40, 0.13); // passcode
+    const artROI  = crop(0.12, 0.22, 0.76, 0.42); // artwork
 
     // 1) OCR
     let passcode: string | undefined;
     let name: string | undefined;
     try {
-      const worker = await createWorker("eng", undefined, { logger: () => {} });
-
+      const worker = await createWorker("eng");
       await (worker as any).setParameters({
         tessedit_char_whitelist: "0123456789",
         tessedit_pageseg_mode: "7",
@@ -131,24 +128,24 @@ export function ScannerModal({
 
       await worker.terminate();
     } catch {
-      // on ne bloque pas : fallback artwork ensuite
+      // ignore, on tentera l’artwork
     }
 
-    // 2) Si passcode → on essaie de récupérer le nom depuis l'API by-id
+    // 2) Passcode → /by-id → nom officiel
     if (passcode) {
       try {
         const byId = await fetch(`/api/cards/by-id?id=${passcode}`, { cache: "no-store" })
           .then(r => r.ok ? r.json() : null).catch(() => null);
         const hit = byId?.data?.[0];
         if (hit?.name) {
-          onResult({ name: hit.name }); // on renvoie le nom “officiel”
+          onResult({ name: hit.name });
           setBusy(false);
           return;
         }
-      } catch { /* ignore */ }
+      } catch {/* ignore */}
     }
 
-    // 3) Si OCR nom existe, on vérifie qu’il y a au moins 1 hit par texte
+    // 3) Nom OCR → vérifie qu’il y a au moins 1 hit texte
     if (name) {
       try {
         const sp = new URLSearchParams({ page: "1", pageSize: "1", q: name });
@@ -159,11 +156,10 @@ export function ScannerModal({
           setBusy(false);
           return;
         }
-      } catch { /* ignore */ }
-      // Si 0 résultat (langue non anglaise par ex.) → on tombera sur artwork
+      } catch {/* ignore */}
     }
 
-    // 4) Fallback Artwork : dHash + /api/cards/image-search
+    // 4) Fallback artwork (dHash) → /image-search
     const dhash = computeDhashFromCanvas(artROI);
     if (!dhash) {
       setError("Lecture impossible (reflets ?). Essaie un autre angle/éclairage.");
@@ -172,7 +168,7 @@ export function ScannerModal({
     }
 
     try {
-      const r = await fetch(`/api/cards/image-search?hash=${encodeURIComponent(dhash)}&topK=5`, { cache: "no-store" });
+      const r = await fetch(`/api/cards/image-search?hash=${encodeURIComponent(dhash)}&topK=5&maxDist=20`, { cache: "no-store" });
       const j = await r.json();
       const best = j?.data?.[0];
       if (best?.name) {
