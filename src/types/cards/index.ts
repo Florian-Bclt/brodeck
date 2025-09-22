@@ -1,3 +1,5 @@
+import { BanFilter, CardType, StockFilter } from "@/features/cards/constants";
+
 export type CardDetail = {
   id: number;
   name: string;
@@ -25,3 +27,26 @@ export type CardDetailDTO = {
   imageSmallUrl: string | null;
   imageLargeUrl: string | null;
 };
+
+export type CardRow = {
+  id: number;
+  name: string;
+  type?: string | null;
+  imageSmallUrl?: string | null
+};
+
+export type Filters = {
+  cardType: CardType;
+  monsterClass: string;
+  monsterRace: string;
+  attribute: string;
+  spellSubtype: string;
+  trapSubtype: string;
+  levelMin: string; levelMax: string;
+  atkMin: string;   atkMax: string;
+  defMin: string;   defMax: string;
+  stock: StockFilter;
+  ban: BanFilter;
+};
+
+export type ListResp = { total: number; page: number; pageSize: number; data: CardRow[] };

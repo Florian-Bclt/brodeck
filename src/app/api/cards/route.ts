@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const q = url.searchParams.get("q")?.trim() || "";
   const page = Math.max(1, Number(url.searchParams.get("page") || 1));
-  const pageSize = Math.min(60, Math.max(1, Number(url.searchParams.get("pageSize") || 100)));
+  const pageSize = Math.min(60, Math.max(1, Number(url.searchParams.get("pageSize") || 60)));
 
   // === Params ===
   const cardType = (url.searchParams.get("cardType") || "ALL").toUpperCase(); // ALL | MONSTER | SPELL | TRAP
