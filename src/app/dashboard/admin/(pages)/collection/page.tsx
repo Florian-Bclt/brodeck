@@ -223,7 +223,7 @@ export default function CollectionPage() {
           <h1 className="flex justify-center lg:justify-start text-2xl font-bold text-white">Ma collection</h1>
           <button
             onClick={() => setScannerOpen(true)}
-            className="rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-sm font-semibold text-white hover:bg-white/20"
+            className="rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-sm font-semibold text-white hover:bg-white/20 ml-2"
             title="Scanner une carte et lancer une recherche"
           >
             Scanner une carte
